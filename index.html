@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>kordoc for Obsidian</title>
+  <meta name="description" content="Obsidian Desktop plugin that connects kordoc to an Obsidian vault for HWP/HWPX/PDF/Office/image document conversion." />
+  <style>
+    :root { color-scheme: light dark; --bg:#fbfaf7; --fg:#1f2933; --muted:#637381; --card:#ffffff; --line:#e5e7eb; --accent:#7c3aed; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#111827; --fg:#f9fafb; --muted:#cbd5e1; --card:#1f2937; --line:#374151; --accent:#a78bfa; } }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--fg); line-height:1.7; }
+    main { max-width:920px; margin:0 auto; padding:48px 22px 80px; }
+    header { padding:32px; background:linear-gradient(135deg, rgba(124,58,237,.12), rgba(245,158,11,.10)); border:1px solid var(--line); border-radius:24px; }
+    h1 { margin:0 0 10px; font-size:clamp(2rem,5vw,3.4rem); line-height:1.1; }
+    h2 { margin-top:42px; padding-top:12px; border-top:1px solid var(--line); }
+    code, pre { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+    pre { overflow:auto; background:var(--card); border:1px solid var(--line); padding:16px; border-radius:14px; }
+    .lead { font-size:1.12rem; color:var(--muted); max-width:760px; }
+    .badge { display:inline-block; padding:4px 10px; border:1px solid var(--line); border-radius:999px; color:var(--muted); background:var(--card); margin:4px 4px 0 0; }
+    .grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px; }
+    a { color:var(--accent); }
+    table { border-collapse:collapse; width:100%; background:var(--card); }
+    th, td { border:1px solid var(--line); padding:10px; text-align:left; vertical-align:top; }
+    th { background:rgba(124,58,237,.08); }
+    .warn { border-left:5px solid #f59e0b; padding:12px 16px; background:rgba(245,158,11,.12); border-radius:12px; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <span class="badge">Obsidian Desktop</span>
+    <span class="badge">kordoc bridge</span>
+    <span class="badge">HWP/HWPX/PDF → Markdown</span>
+    <h1>kordoc for Obsidian</h1>
+    <p class="lead"><strong>kordoc for Obsidian</strong>은 Obsidian Desktop에서 <a href="https://github.com/chrisryugj/kordoc">kordoc</a> CLI를 호출해 HWP/HWPX/PDF/Office/이미지 문서를 Markdown, chunks JSON, 마스킹본, HWPX 생성물로 저장하는 브릿지 플러그인입니다.</p>
+    <p><a href="https://github.com/Obito-AI/kordoc-for-obsidian">GitHub 저장소</a> · <a href="https://github.com/Obito-AI/kordoc-for-obsidian/releases/tag/0.1.0">v0.1.0 릴리스</a></p>
+  </header>
+
+  <h2>핵심 요약</h2>
+  <div class="grid">
+    <section class="card"><h3>문서 → Markdown</h3><p>HWP, HWPX, PDF, DOCX, XLS/XLSX, 이미지 파일을 Obsidian 노트로 변환합니다.</p></section>
+    <section class="card"><h3>chunks JSON</h3><p>검색, RAG, AI 분석에 활용할 수 있는 구조 청크 JSON을 생성합니다.</p></section>
+    <section class="card"><h3>Markdown → HWPX</h3><p>현재 Markdown 노트를 kordoc generate로 HWPX 파일로 변환합니다.</p></section>
+    <section class="card"><h3>개인정보 마스킹</h3><p>redacted 파일과 검토필요 리뷰 노트를 함께 생성합니다.</p></section>
+  </div>
+
+  <h2>지원 입력 파일</h2>
+  <pre>.hwp .hwpx .hml .pdf .xls .xlsx .docx .png .jpg .jpeg .webp</pre>
+
+  <h2>설치 방법: BRAT</h2>
+  <ol>
+    <li>Obsidian에서 커뮤니티 플러그인 <strong>BRAT</strong>을 설치합니다.</li>
+    <li>BRAT 설정에서 <strong>Add Beta Plugin</strong>을 선택합니다.</li>
+    <li>아래 저장소 URL을 입력합니다.</li>
+  </ol>
+  <pre>https://github.com/Obito-AI/kordoc-for-obsidian</pre>
+  <ol start="4">
+    <li>Community Plugins에서 <strong>kordoc for Obsidian</strong>을 활성화합니다.</li>
+  </ol>
+
+  <h2>요구사항</h2>
+  <ul>
+    <li>Obsidian Desktop, 모바일 미지원</li>
+    <li>Node.js와 npm</li>
+    <li>기본 실행 방식: <code>npx -y kordoc</code></li>
+  </ul>
+  <p>반복 사용이 많으면 전역 설치도 가능합니다.</p>
+  <pre>npm install -g kordoc
+kordoc --version</pre>
+
+  <h2>기본 폴더 구조</h2>
+  <pre>AI 작업/문서처리/
+  parsed/
+  chunks/
+  redacted/
+  generated/
+  logs/</pre>
+
+  <h2>Obsidian에서 보이는 명령</h2>
+  <table>
+    <thead><tr><th>명령</th><th>기능</th></tr></thead>
+    <tbody>
+      <tr><td>Kordoc: Parse current file to Markdown</td><td>현재 문서를 Markdown으로 변환</td></tr>
+      <tr><td>Kordoc: Parse current file to chunks JSON</td><td>현재 문서를 chunks JSON으로 변환</td></tr>
+      <tr><td>Kordoc: Generate HWPX from current Markdown note</td><td>현재 Markdown 노트를 HWPX로 생성</td></tr>
+      <tr><td>Kordoc: Create redacted copy of current file</td><td>마스킹본과 검토 노트 생성</td></tr>
+    </tbody>
+  </table>
+
+  <h2>안전 주의</h2>
+  <div class="warn">
+    <p><strong>원본 파일은 덮어쓰지 않습니다.</strong> 생성물은 별도 폴더에 저장됩니다.</p>
+    <p><strong>개인정보 마스킹은 자동 검출 보조 기능입니다.</strong> 공개·전송 전 반드시 사람이 검토해야 합니다.</p>
+  </div>
+
+  <h2>GitHub / Raw 링크</h2>
+  <ul>
+    <li>저장소: <a href="https://github.com/Obito-AI/kordoc-for-obsidian">https://github.com/Obito-AI/kordoc-for-obsidian</a></li>
+    <li>README raw: <a href="https://raw.githubusercontent.com/Obito-AI/kordoc-for-obsidian/main/README.md">README.md</a></li>
+    <li>manifest raw: <a href="https://raw.githubusercontent.com/Obito-AI/kordoc-for-obsidian/main/manifest.json">manifest.json</a></li>
+  </ul>
+
+  <h2>상태</h2>
+  <p>현재 버전은 <strong>v0.1.0 beta</strong>입니다. 파일 우클릭 기반 변환, chunks 생성, HWPX 생성, 마스킹본 생성의 MVP 기능을 제공합니다.</p>
+</main>
+</body>
+</html>
