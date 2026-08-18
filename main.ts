@@ -11,6 +11,7 @@ import {
   normalizePath,
 } from "obsidian";
 import { execFile } from "child_process";
+import { existsSync } from "fs";
 import { mkdir, readFile, writeFile, appendFile } from "fs/promises";
 import { basename, dirname, extname, join, parse as parsePath } from "path";
 
@@ -191,13 +192,23 @@ export default class KordocForObsidianPlugin extends Plugin {
 
   private getKordocCommand(): { command: string; argsPrefix: string[] } {
     if (this.pluginSettings.commandMode === "npx") {
-      return { command: "npx", argsPrefix: ["-y", "kordoc"] };
+      return { command: this.resolveExecutable("npx"), argsPrefix: ["-y", "kordoc"] };
     }
     if (this.pluginSettings.commandMode === "global") {
-      return { command: "kordoc", argsPrefix: [] };
+      return { command: this.resolveExecutable("kordoc"), argsPrefix: [] };
     }
     const customParts = this.splitArgs(this.pluginSettings.customArgs);
     return { command: this.pluginSettings.customCommand || "kordoc", argsPrefix: customParts };
+  }
+
+  private resolveExecutable(name: "npx" | "kordoc"): string {
+    const candidates = [
+      `/usr/local/bin/${name}`,
+      `/opt/homebrew/bin/${name}`,
+      `/usr/bin/${name}`,
+      `/bin/${name}`,
+    ];
+    return candidates.find((candidate) => existsSync(candidate)) ?? name;
   }
 
   private splitArgs(raw: string): string[] {

@@ -15,7 +15,7 @@ It is designed for people who keep research, administrative documents, reading m
 
 > Status: early MVP / beta. Use with copies of important documents until you trust the workflow.
 >
-> v0.1.1 fixes macOS GUI launch environments where Obsidian cannot find `npx` because `/usr/local/bin` or `/opt/homebrew/bin` is missing from PATH.
+> v0.1.2 fixes macOS GUI launch environments more robustly by resolving `/usr/local/bin/npx` or `/opt/homebrew/bin/npx` directly before falling back to PATH.
 
 ---
 
@@ -355,7 +355,7 @@ Then restart Obsidian and enable the plugin.
 
 ### `npx` or `kordoc` not found
 
-Obsidian may not inherit the same shell `PATH` as your terminal. v0.1.1 adds common macOS binary paths (`/usr/local/bin`, `/opt/homebrew/bin`) when launching kordoc, but custom Node installs may still need a full path.
+Obsidian may not inherit the same shell `PATH` as your terminal. v0.1.2 resolves common macOS binary paths directly (`/usr/local/bin/npx`, `/opt/homebrew/bin/npx`) before falling back to PATH, but custom Node installs may still need a full path.
 
 Try one of these:
 
