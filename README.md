@@ -14,6 +14,8 @@ Obsidian file / note
 It is designed for people who keep research, administrative documents, reading material, public documents, scanned PDFs, or HWP/HWPX files inside an Obsidian vault and want a quick way to convert them into Markdown-based notes.
 
 > Status: early MVP / beta. Use with copies of important documents until you trust the workflow.
+>
+> v0.1.1 fixes macOS GUI launch environments where Obsidian cannot find `npx` because `/usr/local/bin` or `/opt/homebrew/bin` is missing from PATH.
 
 ---
 
@@ -251,7 +253,7 @@ Available settings:
 | kordoc execution mode | `npx -y kordoc`, global `kordoc`, or custom command |
 | custom command | path/name of a custom executable |
 | custom leading args | extra args placed before plugin-generated kordoc args |
-| work root | vault-relative folder used as `KORDOC_ROOT` |
+| work root | vault-relative folder used as `KORDOC_ROOT`; default `.` means the current vault root |
 | Markdown output folder | where parsed Markdown notes are saved |
 | chunks output folder | where `.chunks.json` files are saved |
 | redacted output folder | where redacted files and review notes are saved |
@@ -321,7 +323,7 @@ This plugin follows a few conservative defaults:
 - Redaction output is marked as requiring human review.
 - `KORDOC_ROOT` is set to the configured work root when kordoc is called.
 
-Important caveat: `KORDOC_ROOT` is enforced by kordoc, not by this plugin. Keep your configured work root narrow if you use the plugin with sensitive documents.
+Important caveat: `KORDOC_ROOT` is enforced by kordoc, not by this plugin. The default `.` restricts kordoc to the current vault so files selected anywhere in the vault can be processed. If you narrow this folder, selected files outside that folder may fail.
 
 ---
 
@@ -353,7 +355,7 @@ Then restart Obsidian and enable the plugin.
 
 ### `npx` or `kordoc` not found
 
-Obsidian may not inherit the same shell `PATH` as your terminal.
+Obsidian may not inherit the same shell `PATH` as your terminal. v0.1.1 adds common macOS binary paths (`/usr/local/bin`, `/opt/homebrew/bin`) when launching kordoc, but custom Node installs may still need a full path.
 
 Try one of these:
 

@@ -33,7 +33,7 @@ const DEFAULT_SETTINGS: KordocSettings = {
   commandMode: "npx",
   customCommand: "kordoc",
   customArgs: "",
-  workRoot: "AI 작업/문서처리",
+  workRoot: ".",
   parsedFolder: "AI 작업/문서처리/parsed",
   chunksFolder: "AI 작업/문서처리/chunks",
   redactedFolder: "AI 작업/문서처리/redacted",
@@ -211,7 +211,8 @@ export default class KordocForObsidianPlugin extends Plugin {
     const cwd = this.getVaultBasePath();
     const env = {
       ...process.env,
-      KORDOC_ROOT: this.vaultPathToFullPath(this.pluginSettings.workRoot),
+      PATH: this.buildExecutionPath(),
+      KORDOC_ROOT: this.resolveKordocRoot(),
     };
     return new Promise((resolve, reject) => {
       execFile(command, [...argsPrefix, ...args], { cwd, env, timeout: 10 * 60 * 1000, maxBuffer: 50 * 1024 * 1024 }, (error, stdout, stderr) => {
@@ -223,6 +224,25 @@ export default class KordocForObsidianPlugin extends Plugin {
         resolve({ stdout, stderr });
       });
     });
+  }
+
+  private buildExecutionPath(): string {
+    const commonPaths = [
+      "/usr/local/bin",
+      "/opt/homebrew/bin",
+      "/usr/bin",
+      "/bin",
+      "/usr/sbin",
+      "/sbin",
+    ];
+    const currentPath = process.env.PATH ?? "";
+    return [...commonPaths, currentPath].filter(Boolean).join(":");
+  }
+
+  private resolveKordocRoot(): string {
+    const root = normalizePath(this.pluginSettings.workRoot || ".");
+    if (root === "." || root === "") return this.getVaultBasePath();
+    return this.vaultPathToFullPath(root);
   }
 
   async parseFileToMarkdown(file: TFile) {
@@ -431,7 +451,7 @@ class KordocSettingTab extends PluginSettingTab {
           }));
     }
 
-    this.addTextSetting("작업 루트(KORDOC_ROOT)", "kordoc 파일 접근을 제한할 볼트 내부 폴더입니다.", "workRoot");
+    this.addTextSetting("작업 루트(KORDOC_ROOT)", "kordoc 파일 접근을 제한할 볼트 내부 폴더입니다. 기본값 . 은 현재 볼트 전체만 허용합니다.", "workRoot");
     this.addTextSetting("Markdown 출력 폴더", "파싱된 Markdown 노트 저장 위치", "parsedFolder");
     this.addTextSetting("chunks 출력 폴더", "RAG/구조 청크 JSON 저장 위치", "chunksFolder");
     this.addTextSetting("마스킹 출력 폴더", "redacted 파일과 검토 노트 저장 위치", "redactedFolder");
