@@ -1,0 +1,9 @@
+.kordoc-for-obsidian-setting-muted {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+
+.kordoc-for-obsidian-log {
+  white-space: pre-wrap;
+  font-family: var(--font-monospace);
+}

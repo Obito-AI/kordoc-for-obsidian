@@ -1,0 +1,28 @@
+{
+  "name": "kordoc-for-obsidian",
+  "version": "0.1.0",
+  "description": "Obsidian bridge plugin for kordoc document parsing and generation.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs --watch",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "typecheck": "tsc -noEmit -skipLibCheck"
+  },
+  "keywords": [
+    "obsidian",
+    "kordoc",
+    "hwp",
+    "hwpx",
+    "pdf",
+    "markdown"
+  ],
+  "author": "Aion & Aimyon",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "builtin-modules": "^4.0.0",
+    "esbuild": "^0.24.0",
+    "obsidian": "^1.8.7",
+    "typescript": "^5.6.3"
+  }
+}

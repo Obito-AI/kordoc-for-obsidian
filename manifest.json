@@ -1,0 +1,10 @@
+{
+  "id": "kordoc-for-obsidian",
+  "name": "kordoc for Obsidian",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Use kordoc to parse Korean documents into Markdown/chunks and generate or redact documents from Obsidian.",
+  "author": "Aion & Aimyon",
+  "authorUrl": "https://github.com/Obito-AI",
+  "isDesktopOnly": true
+}
