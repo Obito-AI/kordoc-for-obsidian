@@ -1,0 +1,73 @@
+kordoc for Obsidian
+
+요약
+kordoc for Obsidian은 Obsidian Desktop에서 kordoc CLI를 호출해 HWP/HWPX/PDF/DOCX/XLSX/이미지 문서를 Markdown, chunks JSON, 마스킹본, HWPX 생성물로 저장하는 브릿지 플러그인입니다. 플러그인이 문서 파싱 엔진을 직접 구현하는 것이 아니라, 공개 문서 처리 도구 kordoc을 Obsidian 안에서 쉽게 실행하고 결과물을 볼트에 정리해주는 방식입니다.
+
+설치
+1. Obsidian Desktop에서 BRAT 플러그인을 설치합니다.
+2. BRAT 설정에서 Add Beta Plugin을 선택합니다.
+3. 저장소 URL을 입력합니다: https://github.com/Obito-AI/kordoc-for-obsidian
+4. Community Plugins에서 kordoc for Obsidian을 활성화합니다.
+5. 기본 실행 방식은 npx -y kordoc입니다. 반복 사용 시 npm install -g kordoc으로 전역 설치 후 설정에서 global kordoc 모드로 바꿀 수 있습니다.
+
+사전 준비물
+- Obsidian Desktop
+- Node.js와 npm
+- kordoc 실행 환경
+- 기본값: npx -y kordoc
+- 선택: npm install -g kordoc
+
+주요 기능
+1. 문서 파일을 Markdown으로 변환
+   - HWP, HWPX, HML, PDF, XLS, XLSX, DOCX, PNG, JPG, JPEG, WEBP 파일을 대상으로 합니다.
+   - 파일 우클릭 또는 명령 팔레트에서 Markdown 변환을 실행합니다.
+   - 결과는 기본적으로 AI 작업/문서처리/parsed/ 폴더에 저장됩니다.
+
+2. chunks JSON 생성
+   - AI 검색, RAG, 문서 분석에 활용할 수 있는 chunks JSON을 생성합니다.
+   - 결과는 기본적으로 AI 작업/문서처리/chunks/ 폴더에 저장됩니다.
+
+3. Markdown 노트에서 HWPX 생성
+   - 현재 Markdown 노트를 kordoc generate 명령으로 HWPX 파일로 변환합니다.
+   - 결과는 기본적으로 AI 작업/문서처리/generated/ 폴더에 저장됩니다.
+
+4. 개인정보 마스킹본 생성
+   - 문서에서 개인정보 마스킹본을 생성합니다.
+   - 마스킹 결과 파일과 함께 human_review_required: true가 표시된 검토 노트를 생성합니다.
+   - 자동 마스킹은 보조 기능이므로 공개 또는 전송 전에 사람이 반드시 확인해야 합니다.
+
+5. 작업 로그 저장
+   - 성공/실패 작업 이력을 JSONL 형식으로 기록합니다.
+   - 기본 위치는 AI 작업/문서처리/logs/kordoc-jobs.jsonl입니다.
+
+실제 사용 흐름
+- Obsidian 파일 탐색기에서 문서를 우클릭합니다.
+- Kordoc: Markdown으로 변환, Kordoc: chunks JSON 생성, Kordoc: 개인정보 마스킹본 생성 중 필요한 명령을 선택합니다.
+- Markdown 노트에서는 Kordoc: 현재 노트를 HWPX로 생성 명령을 사용할 수 있습니다.
+- Cmd+P 명령 팔레트에서 Kordoc 명령을 검색해 실행할 수도 있습니다.
+
+기본 폴더 구조
+AI 작업/문서처리/
+  parsed/
+  chunks/
+  redacted/
+  generated/
+  logs/
+
+지원 파일 형식
+.hwp, .hwpx, .hml, .pdf, .xls, .xlsx, .docx, .png, .jpg, .jpeg, .webp
+
+제약 사항 및 주의 사항
+- Desktop 전용 플러그인입니다. Obsidian Mobile에서는 사용할 수 없습니다.
+- Node.js/npm 또는 kordoc CLI 실행 환경이 필요합니다.
+- OCR은 느릴 수 있고 첫 실행 시 모델 다운로드가 필요할 수 있습니다.
+- 변환 품질은 원본 문서 상태와 kordoc 처리 품질에 따라 달라집니다.
+- 원본 파일은 덮어쓰지 않고 결과물을 별도 폴더에 저장하는 것을 기본 원칙으로 합니다.
+- 개인정보 마스킹 결과는 자동 완료물이 아니라 검토필요 상태로 보아야 합니다.
+- 현재 버전은 v0.1.0 beta MVP입니다.
+
+공개 링크
+- GitHub 저장소: https://github.com/Obito-AI/kordoc-for-obsidian
+- GitHub Pages 소개 페이지: https://obito-ai.github.io/kordoc-for-obsidian/
+- BRAT 설치 URL: https://github.com/Obito-AI/kordoc-for-obsidian
+- 원본 엔진 kordoc: https://github.com/chrisryugj/kordoc
