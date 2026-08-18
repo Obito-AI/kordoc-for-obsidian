@@ -15,7 +15,7 @@ It is designed for people who keep research, administrative documents, reading m
 
 > Status: early MVP / beta. Use with copies of important documents until you trust the workflow.
 >
-> v0.1.2 fixes macOS GUI launch environments more robustly by resolving `/usr/local/bin/npx` or `/opt/homebrew/bin/npx` directly before falling back to PATH.
+> v0.1.3 hardens Windows/macOS `npx` execution, includes `pdfjs-dist` for PDF parsing via npx mode, normalizes extracted image links, and defaults Markdown parse output to `10_SOURCE`.
 
 ---
 
@@ -29,7 +29,7 @@ Right-click a supported file in Obsidian and choose:
 Kordoc: Markdown으로 변환
 ```
 
-The plugin calls kordoc and saves a Markdown note into the configured `parsed` folder.
+The plugin calls kordoc and saves a Markdown note into the configured Markdown output folder. The default is `10_SOURCE` so parsed source material lands in the vault source area.
 
 ### Generate chunks JSON
 
@@ -127,7 +127,7 @@ It uses Node/Electron APIs to run a local CLI process, so it is not intended for
 The default execution mode is:
 
 ```bash
-npx -y kordoc
+npx -y --package kordoc --package pdfjs-dist kordoc
 ```
 
 So Node.js and npm must be available to Obsidian's desktop process.
@@ -138,7 +138,7 @@ You can use kordoc in one of three ways:
 
 | Mode | How it runs | Good for |
 |---|---|---|
-| `npx -y kordoc` | Downloads/runs the package as needed | easiest setup |
+| `npx -y --package kordoc --package pdfjs-dist kordoc` | Downloads/runs kordoc with PDF parser dependency | easiest setup, best for PDFs |
 | `kordoc` | Uses globally installed kordoc | faster repeated use |
 | custom | Your own command and arguments | advanced/local builds |
 
@@ -198,8 +198,8 @@ Then restart Obsidian and enable the plugin.
 By default, the plugin uses this vault-internal structure:
 
 ```text
+10_SOURCE/                  # Markdown parse output
 AI 작업/문서처리/
-  parsed/
   chunks/
   redacted/
   generated/
@@ -212,7 +212,7 @@ You can change these paths in the plugin settings.
 
 | Action | Output |
 |---|---|
-| Markdown parse | `AI 작업/문서처리/parsed/<file>.md` |
+| Markdown parse | `10_SOURCE/<file>.md` |
 | chunks parse | `AI 작업/문서처리/chunks/<file>.chunks.json` |
 | redaction | `AI 작업/문서처리/redacted/<file>_redacted.<ext>` |
 | redaction review note | `AI 작업/문서처리/redacted/<file>_redacted.redaction-review.md` |

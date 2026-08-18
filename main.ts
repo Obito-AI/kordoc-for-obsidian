@@ -35,7 +35,7 @@ const DEFAULT_SETTINGS: KordocSettings = {
   customCommand: "kordoc",
   customArgs: "",
   workRoot: ".",
-  parsedFolder: "AI 작업/문서처리/parsed",
+  parsedFolder: "10_SOURCE",
   chunksFolder: "AI 작업/문서처리/chunks",
   redactedFolder: "AI 작업/문서처리/redacted",
   generatedFolder: "AI 작업/문서처리/generated",
@@ -192,7 +192,10 @@ export default class KordocForObsidianPlugin extends Plugin {
 
   private getKordocCommand(): { command: string; argsPrefix: string[] } {
     if (this.pluginSettings.commandMode === "npx") {
-      return { command: this.resolveExecutable("npx"), argsPrefix: ["-y", "kordoc"] };
+      return {
+        command: this.resolveExecutable("npx"),
+        argsPrefix: ["-y", "--package", "kordoc", "--package", "pdfjs-dist", "kordoc"],
+      };
     }
     if (this.pluginSettings.commandMode === "global") {
       return { command: this.resolveExecutable("kordoc"), argsPrefix: [] };
@@ -202,6 +205,11 @@ export default class KordocForObsidianPlugin extends Plugin {
   }
 
   private resolveExecutable(name: "npx" | "kordoc"): string {
+    if (process.platform === "win32") {
+      // Windows resolves npm shims such as npx.cmd through PATHEXT when shell mode is enabled.
+      // Returning the bare command avoids quoting problems with paths like C:\Program Files\nodejs.
+      return name;
+    }
     const candidates = [
       `/usr/local/bin/${name}`,
       `/opt/homebrew/bin/${name}`,
@@ -226,7 +234,13 @@ export default class KordocForObsidianPlugin extends Plugin {
       KORDOC_ROOT: this.resolveKordocRoot(),
     };
     return new Promise((resolve, reject) => {
-      execFile(command, [...argsPrefix, ...args], { cwd, env, timeout: 10 * 60 * 1000, maxBuffer: 50 * 1024 * 1024 }, (error, stdout, stderr) => {
+      execFile(command, [...argsPrefix, ...args], {
+        cwd,
+        env,
+        timeout: 10 * 60 * 1000,
+        maxBuffer: 50 * 1024 * 1024,
+        shell: process.platform === "win32",
+      }, (error, stdout, stderr) => {
         if (error) {
           const detail = [stderr, stdout, error.message].filter(Boolean).join("\n");
           reject(new Error(detail));
@@ -238,16 +252,12 @@ export default class KordocForObsidianPlugin extends Plugin {
   }
 
   private buildExecutionPath(): string {
-    const commonPaths = [
-      "/usr/local/bin",
-      "/opt/homebrew/bin",
-      "/usr/bin",
-      "/bin",
-      "/usr/sbin",
-      "/sbin",
-    ];
+    const commonPaths = process.platform === "win32"
+      ? ["C:\Program Files\nodejs", "C:\Program Files (x86)\nodejs"]
+      : ["/usr/local/bin", "/opt/homebrew/bin", "/usr/bin", "/bin", "/usr/sbin", "/sbin"];
     const currentPath = process.env.PATH ?? "";
-    return [...commonPaths, currentPath].filter(Boolean).join(":");
+    const delimiter = process.platform === "win32" ? ";" : ":";
+    return [...commonPaths, currentPath].filter(Boolean).join(delimiter);
   }
 
   private resolveKordocRoot(): string {
@@ -346,10 +356,18 @@ export default class KordocForObsidianPlugin extends Plugin {
 
   private async wrapMarkdownOutput(outputRel: string, source: TFile, status: string) {
     const fullOutput = this.vaultPathToFullPath(outputRel);
-    const body = await readFile(fullOutput, "utf8");
-    if (body.startsWith("---\nsource_file:")) return;
+    const rawBody = await readFile(fullOutput, "utf8");
+    const body = this.normalizeMarkdownAssetLinks(rawBody);
+    if (body.startsWith("---\nsource_file:")) {
+      if (body !== rawBody) await writeFile(fullOutput, body, "utf8");
+      return;
+    }
     const wrapped = `---\nsource_file: "[[${source.path}]]"\nsource_path: "${source.path}"\nparser: kordoc\nparsed_at: "${new Date().toISOString()}"\nstatus: ${status}\n---\n\n# ${parsePath(source.name).name}\n\n## 원본\n- [[${source.path}]]\n\n## 파싱 결과\n\n${body}`;
     await writeFile(fullOutput, wrapped, "utf8");
+  }
+
+  private normalizeMarkdownAssetLinks(markdown: string): string {
+    return markdown.replace(/!\[image\]\((image_\d+\.png)\)/g, "![image](images/$1)");
   }
 
   private async writeRedactionReview(reviewRel: string, source: TFile, redactedRel: string) {
