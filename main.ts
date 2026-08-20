@@ -446,7 +446,7 @@ class KordocSettingTab extends PluginSettingTab {
       .setName("kordoc 실행 방식")
       .setDesc("npx는 설치 없이 쓰기 쉽고, global/custom은 더 빠릅니다.")
       .addDropdown((dropdown) => dropdown
-        .addOption("npx", "npx -y kordoc")
+        .addOption("npx", "npx -y --package kordoc --package pdfjs-dist kordoc")
         .addOption("global", "kordoc")
         .addOption("custom", "사용자 지정")
         .setValue(this.plugin.pluginSettings.commandMode)

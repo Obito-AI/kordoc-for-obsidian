@@ -250,7 +250,7 @@ Available settings:
 
 | Setting | Meaning |
 |---|---|
-| kordoc execution mode | `npx -y kordoc`, global `kordoc`, or custom command |
+| kordoc execution mode | `npx -y --package kordoc --package pdfjs-dist kordoc`, global `kordoc`, or custom command |
 | custom command | path/name of a custom executable |
 | custom leading args | extra args placed before plugin-generated kordoc args |
 | work root | vault-relative folder used as `KORDOC_ROOT`; default `.` means the current vault root |
@@ -355,7 +355,7 @@ Then restart Obsidian and enable the plugin.
 
 ### `npx` or `kordoc` not found
 
-Obsidian may not inherit the same shell `PATH` as your terminal. v0.1.2 resolves common macOS binary paths directly (`/usr/local/bin/npx`, `/opt/homebrew/bin/npx`) before falling back to PATH, but custom Node installs may still need a full path.
+Obsidian may not inherit the same shell `PATH` as your terminal. v0.1.3 resolves common macOS binary paths directly (`/usr/local/bin/npx`, `/opt/homebrew/bin/npx`) before falling back to PATH, but custom Node installs may still need a full path.
 
 Try one of these:
 
@@ -434,7 +434,7 @@ The plugin runs kordoc locally. It does not intentionally upload your files.
 
 However:
 
-- `npx -y kordoc` may contact npm to download the package if not cached.
+- `npx -y --package kordoc --package pdfjs-dist kordoc` may contact npm to download the package if not cached.
 - kordoc OCR/model behavior depends on kordoc settings and may download model files on first use.
 - Review kordoc's own documentation for its network/offline behavior.
 
