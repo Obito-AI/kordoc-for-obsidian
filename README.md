@@ -15,7 +15,7 @@ It is designed for people who keep research, administrative documents, reading m
 
 > Status: early MVP / beta. Use with copies of important documents until you trust the workflow.
 >
-> v0.1.3 hardens Windows/macOS `npx` execution, includes `pdfjs-dist` for PDF parsing via npx mode, normalizes extracted image links, and defaults Markdown parse output to `10_SOURCE`.
+> v0.1.4 hardens Windows/macOS `npx` execution, includes `pdfjs-dist` for PDF parsing via npx mode, normalizes extracted image links, and defaults Markdown parse output to `10_SOURCE`.
 
 ---
 
@@ -355,7 +355,7 @@ Then restart Obsidian and enable the plugin.
 
 ### `npx` or `kordoc` not found
 
-Obsidian may not inherit the same shell `PATH` as your terminal. v0.1.3 resolves common macOS binary paths directly (`/usr/local/bin/npx`, `/opt/homebrew/bin/npx`) before falling back to PATH, but custom Node installs may still need a full path.
+Obsidian may not inherit the same shell `PATH` as your terminal. v0.1.4 resolves common macOS binary paths directly (`/usr/local/bin/npx`, `/opt/homebrew/bin/npx`) before falling back to PATH, but custom Node installs may still need a full path.
 
 Try one of these:
 

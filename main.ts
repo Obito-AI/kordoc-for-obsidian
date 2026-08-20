@@ -201,7 +201,19 @@ export default class KordocForObsidianPlugin extends Plugin {
       return { command: this.resolveExecutable("kordoc"), argsPrefix: [] };
     }
     const customParts = this.splitArgs(this.pluginSettings.customArgs);
-    return { command: this.pluginSettings.customCommand || "kordoc", argsPrefix: customParts };
+    return {
+      command: this.normalizeCustomCommand(this.pluginSettings.customCommand || "kordoc"),
+      argsPrefix: customParts,
+    };
+  }
+
+  private normalizeCustomCommand(command: string): string {
+    if (process.platform !== "win32") return command;
+    const lower = command.toLowerCase().replace(/\\/g, "/");
+    if (lower.endsWith("/npx") || lower.endsWith("/npx.cmd")) return this.resolveExecutable("npx");
+    if (lower.endsWith("/kordoc") || lower.endsWith("/kordoc.cmd")) return this.resolveExecutable("kordoc");
+    if (lower.startsWith("/usr/") || lower.startsWith("/opt/")) return this.resolveExecutable("npx");
+    return command;
   }
 
   private resolveExecutable(name: "npx" | "kordoc"): string {

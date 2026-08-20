@@ -64,7 +64,7 @@ AI 작업/문서처리/
 - 변환 품질은 원본 문서 상태와 kordoc 처리 품질에 따라 달라집니다.
 - 원본 파일은 덮어쓰지 않고 결과물을 별도 폴더에 저장하는 것을 기본 원칙으로 합니다.
 - 개인정보 마스킹 결과는 자동 완료물이 아니라 검토필요 상태로 보아야 합니다.
-- 현재 버전은 v0.1.3 beta MVP입니다. v0.1.3는 macOS Obsidian 앱에서 npx를 찾지 못하는 PATH 문제를 절대경로 탐색으로 보정합니다.
+- 현재 버전은 v0.1.4 beta MVP입니다. v0.1.4는 macOS Obsidian 앱에서 npx를 찾지 못하는 PATH 문제를 절대경로 탐색으로 보정합니다.
 
 공개 링크
 - GitHub 저장소: https://github.com/Obito-AI/kordoc-for-obsidian
