@@ -246,12 +246,17 @@ export default class KordocForObsidianPlugin extends Plugin {
       KORDOC_ROOT: this.resolveKordocRoot(),
     };
     return new Promise((resolve, reject) => {
-      execFile(command, [...argsPrefix, ...args], {
+      const finalArgs = [...argsPrefix, ...args];
+      const runner = process.platform === "win32" ? "cmd.exe" : command;
+      const runnerArgs = process.platform === "win32"
+        ? ["/d", "/s", "/c", [command, ...finalArgs].map((arg) => this.quoteWindowsShellArg(arg)).join(" ")]
+        : finalArgs;
+
+      execFile(runner, runnerArgs, {
         cwd,
         env,
         timeout: 10 * 60 * 1000,
         maxBuffer: 50 * 1024 * 1024,
-        shell: process.platform === "win32",
       }, (error, stdout, stderr) => {
         if (error) {
           const detail = [stderr, stdout, error.message].filter(Boolean).join("\n");
@@ -261,6 +266,12 @@ export default class KordocForObsidianPlugin extends Plugin {
         resolve({ stdout, stderr });
       });
     });
+  }
+
+  private quoteWindowsShellArg(arg: string): string {
+    // cmd.exe receives one command string. Quote every argument so paths like
+    // E:\Obsidian\...\감정으로 끝날기 만드는 법_이호철.pdf stay one file arg.
+    return `"${arg.replace(/(\\*)"/g, '$1$1\\"')}"`;
   }
 
   private buildExecutionPath(): string {

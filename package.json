@@ -1,6 +1,6 @@
 {
   "name": "kordoc-for-obsidian",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Obsidian bridge plugin for kordoc document parsing and generation.",
   "main": "main.js",
   "scripts": {
